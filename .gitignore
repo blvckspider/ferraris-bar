@@ -4,4 +4,4 @@ dist
 **/.DS_Store
 
 # prisma
-/src/generated/prisma
+server/src/generated/prisma
