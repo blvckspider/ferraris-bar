@@ -1,7 +1,7 @@
 # Ferraris Bar
 
 
-## Tech Stack
+## Server Tech Stack
 - **Runtime system:** Node.js
 - **HTTP framework:** Express
 - **Language:** TypeScript
