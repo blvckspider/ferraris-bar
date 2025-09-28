@@ -15,7 +15,7 @@ function isPrismaUniqueConstraintError(err: unknown): err is { code: "P2002" }{
 // Register
 export const register = async (req: Request, res: Response) => {
   const { email, password } = req.body;
-  if(!email || !password) return res.status(400).json({ message: "Email e password richieste" });
+  if(!email || !password) return res.status(400).json({ message: "Email and password required" });
 
   try {
     const hash = await argon2.hash(password);
@@ -23,31 +23,31 @@ export const register = async (req: Request, res: Response) => {
       data: { email, passwordHash: hash },
     });
 
-    res.status(201).json({ message: "Utente creato", userId: user.id });
+    res.status(201).json({ message: "User created", userId: user.id });
   }
   catch(err: unknown){
     if(isPrismaUniqueConstraintError(err)){
-      return res.status(400).json({ message: "Email già registrata" });
+      return res.status(400).json({ message: "Email already registered" });
     }
-    res.status(500).json({ message: "Errore server" });
+    res.status(500).json({ message: "Server error" });
   }
 };
 
 // Login
 export const login = async (req: Request, res: Response) => {
   const { email, password } = req.body;
-  if(!email || !password) return res.status(400).json({ message: "Email e password richieste" });
+  if(!email || !password) return res.status(400).json({ message: "Email and password required" });
 
   try {
     const user = await prisma.user.findUnique({ where: { email } });
-    if(!user) return res.status(401).json({ message: "Credenziali errate" });
+    if(!user) return res.status(401).json({ message: "Invalid credentials" });
 
     const valid = await argon2.verify(user.passwordHash, password);
-    if(!valid) return res.status(401).json({ message: "Credenziali errate" });
+    if(!valid) return res.status(401).json({ message: "Invalid credentials" });
 
     const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: "1h" });
 
     res.json({ accessToken: token });
   }
-  catch { res.status(500).json({ message: "Errore server" }); }
+  catch { res.status(500).json({ message: "Server error" }); }
 };
