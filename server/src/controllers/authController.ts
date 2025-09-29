@@ -23,10 +23,8 @@ export const register = async (req: Request, res: Response) => {
     const accessToken = generateAccessToken(user.id);
     const refreshToken = generateRefreshToken(user.id);
 
-    res
-      .cookie("refreshToken", refreshToken, { httpOnly: true, sameSite: "strict", secure: false }) // secure:true in prod
-      .status(201)
-      .json({ message: "Utente creato", userId: user.id, accessToken });
+    res.cookie("refreshToken", refreshToken, { httpOnly: true, sameSite: "strict", secure: process.env.NODE_ENV === "production" || false })
+      .status(201).json({ message: "User created", userId: user.id, accessToken });
   }
   catch(err: unknown){
     if(isPrismaUniqueConstraintError(err)){
@@ -69,4 +67,15 @@ export const refresh = (req: Request, res: Response) => {
     res.json({ accessToken });
   }
   catch { res.status(401).json({ message: "Refresh token invalid" }); }
+};
+
+// Logout
+export const logout = (req: Request, res: Response) => {
+  res.cookie("refreshToken", "", {
+    httpOnly: true,
+    sameSite: "strict",
+    secure: process.env.NODE_ENV === "production" || false,
+    maxAge: 0,
+  })
+  .status(200).json({ message: "Logged out successfully" });
 };
