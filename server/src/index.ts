@@ -5,6 +5,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import cookieParser from "cookie-parser";
 import authRoutes from "./routes/auth.js";
+import productRoutes from "./routes/product.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -17,6 +18,7 @@ app.use(cookieParser());
 
 // Routes
 app.use("/auth", authRoutes);
+app.use("/products", productRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => { console.log(`Server running on port ${PORT}`); });
