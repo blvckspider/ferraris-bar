@@ -20,8 +20,8 @@ export const register = async (req: Request, res: Response) => {
     const hash = await argon2.hash(password);
     const user = await prisma.user.create({ data: { email, passwordHash: hash } });
 
-    const accessToken = generateAccessToken(user.id);
-    const refreshToken = generateRefreshToken(user.id);
+    const accessToken = generateAccessToken(user.id, user.role);
+    const refreshToken = generateRefreshToken(user.id, user.role);
 
     res.cookie("refreshToken", refreshToken, { httpOnly: true, sameSite: "strict", secure: process.env.NODE_ENV === "production" || false })
       .status(201).json({ message: "User created", userId: user.id, accessToken });
@@ -46,8 +46,8 @@ export const login = async (req: Request, res: Response) => {
     const valid = await argon2.verify(user.passwordHash, password);
     if(!valid) return res.status(401).json({ message: "Invalid credentials" });
 
-    const accessToken = generateAccessToken(user.id);
-    const refreshToken = generateRefreshToken(user.id);
+    const accessToken = generateAccessToken(user.id, user.role);
+    const refreshToken = generateRefreshToken(user.id, user.role);
 
     res
       .cookie("refreshToken", refreshToken, { httpOnly: true, sameSite: "strict", secure: false })
@@ -62,8 +62,8 @@ export const refresh = (req: Request, res: Response) => {
   if(!token) return res.status(401).json({ message: "Refresh token missing" });
 
   try {
-    const payload = jwt.verify(token, REFRESH_SECRET) as { userId: number };
-    const accessToken = generateAccessToken(payload.userId);
+    const payload = jwt.verify(token, REFRESH_SECRET) as { userId: number, role: string };
+    const accessToken = generateAccessToken(payload.userId, payload.role);
     res.json({ accessToken });
   }
   catch { res.status(401).json({ message: "Refresh token invalid" }); }
