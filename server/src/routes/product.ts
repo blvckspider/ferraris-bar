@@ -9,8 +9,8 @@ router.get("/", getProducts);
 router.get("/:id", getProductById);
 
 // protected
-router.post("/", authenticate, requireRole(["ADMIN", "BARTENDER"]), createProduct);
-router.put("/:id", authenticate, requireRole(["ADMIN", "BARTENDER"]), updateProduct);
-router.delete("/:id", authenticate, requireRole(["ADMIN"]), deleteProduct);
+router.post("/", authenticate, requireRole(["DEV", "ADMIN", "BARTENDER"]), createProduct);
+router.put("/:id", authenticate, requireRole(["DEV", "ADMIN", "BARTENDER"]), updateProduct);
+router.delete("/:id", authenticate, requireRole(["DEV", "ADMIN"]), deleteProduct);
 
 export default router;
