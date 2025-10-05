@@ -6,8 +6,9 @@
     "esModuleInterop": true,
     "strict": true,
     "outDir": "dist",
-    "rootDir": "src",
+    "rootDir": ".",
     "resolveJsonModule": true
   },
+  "include": ["src/**/*.ts", "prisma/seed.ts"],
   "exclude": ["node_modules", "dist", "*.config.ts"]
 }
