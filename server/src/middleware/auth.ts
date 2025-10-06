@@ -1,17 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { JWT_SECRET } from "../utils/jwt.js";
+import { UserJWTPayload } from "../utils/express.js";
 import jwt from "jsonwebtoken";
-
-interface JwtPayload {
-  userId: number;
-  role: string;
-}
-
-declare module "express-serve-static-core" {
-  interface Request {
-    user?: JwtPayload;
-  }
-}
 
 export const authenticate = (req: Request, res: Response, next: NextFunction) => {
   const authHeader = req.headers.authorization;
@@ -19,7 +9,7 @@ export const authenticate = (req: Request, res: Response, next: NextFunction) =>
 
   const token = authHeader.split(" ")[1];
   try {
-    const payload = jwt.verify(token, JWT_SECRET) as JwtPayload;
+    const payload = jwt.verify(token, JWT_SECRET) as UserJWTPayload;
     req.user = payload;
     next();
   }
