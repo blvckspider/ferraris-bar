@@ -16,6 +16,10 @@ export const authenticate = (req: Request, res: Response, next: NextFunction) =>
   catch { res.status(401).json({ message: "Token invalid or expired" }); }
 };
 
+export function assertAuthenticated(req: Request): asserts req is Request & { user: { id: number; role: string } }{
+  if(!req.user) throw new Error("Unauthorized");
+}
+
 export const requireRole = (roles: string[]) => {
   return (req: Request, res: Response, next: NextFunction) => {
     if(!req.user) return res.status(401).json({ message: "Unauthorized" });
