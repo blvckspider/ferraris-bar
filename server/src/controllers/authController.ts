@@ -66,7 +66,7 @@ export const refresh = (req: Request, res: Response) => {
     const accessToken = generateAccessToken(payload.userId, payload.role);
     res.json({ accessToken });
   }
-  catch { res.status(401).json({ message: "Refresh token invalid" }); }
+  catch{ res.status(401).json({ message: "Refresh token invalid" }); }
 };
 
 // Logout
