@@ -5,34 +5,7 @@ import jwt from "jsonwebtoken";
 import { generateAccessToken, generateRefreshToken, REFRESH_SECRET } from "../utils/jwt.js";
 
 const prisma = new PrismaClient();
-function isPrismaUniqueConstraintError(err: unknown): err is { code: "P2002" }{
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return typeof err === "object" && err !== null && "code" in err && (err as any).code === "P2002";
-}
 
-
-// Register
-export const register = async (req: Request, res: Response) => {
-  const { email, password } = req.body;
-  if(!email || !password) return res.status(400).json({ message: "Email and password required" });
-
-  try {
-    const hash = await argon2.hash(password);
-    const user = await prisma.user.create({ data: { email, passwordHash: hash } });
-
-    const accessToken = generateAccessToken(user.id, user.role);
-    const refreshToken = generateRefreshToken(user.id, user.role);
-
-    res.cookie("refreshToken", refreshToken, { httpOnly: true, sameSite: "strict", secure: process.env.NODE_ENV === "production" || false })
-      .status(201).json({ message: "User created", userId: user.id, accessToken });
-  }
-  catch(err: unknown){
-    if(isPrismaUniqueConstraintError(err)){
-      return res.status(400).json({ message: "Email already registered" });
-    }
-    res.status(500).json({ message: "Server error" });
-  }
-};
 
 // Login
 export const login = async (req: Request, res: Response) => {

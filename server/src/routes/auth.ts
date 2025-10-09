@@ -1,10 +1,8 @@
 import { Router } from "express";
-import { register, login, refresh, logout } from "../controllers/authController.js";
-import { authenticate, requireRole } from "../middleware/auth.js";
+import { login, refresh, logout } from "../controllers/authController.js";
 
 const router = Router();
 
-router.post("/register", authenticate, requireRole(["DEV", "ADMIN"]), register);
 router.post("/login", login);
 router.post("/refresh", refresh);
 router.post("/logout", logout);
