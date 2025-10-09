@@ -6,7 +6,7 @@
 - **HTTP framework:** Express
 - **Language:** TypeScript
 - **Database:** PostgreSQL
-- **ORM:** Sequelize
+- **ORM:** Prisma
 - **Authentication:** JWT + refresh token
 - **Testing:** Jest
 - **Development tooling:** Nodemon, ESLint, Prettier
